@@ -614,7 +614,7 @@ byte correctionAFRClosedLoop()
       if( (currentStatus.coolant > (int)(configPage6.egoTemp - CALIBRATION_TEMPERATURE_OFFSET)) && (currentStatus.RPM > (unsigned int)(configPage6.egoRPM * 100)) && (currentStatus.TPS < configPage6.egoTPSMax) && (currentStatus.O2 < configPage6.ego_max) && (currentStatus.O2 > configPage6.ego_min) && (currentStatus.runSecs > configPage6.ego_sdelay) &&  (BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO) == 0) )
       {
 
-        if (1) // check if autotune is enabled or not
+        if (configPage9.autotuneEnabled) // check if autotune is enabled or not
         {
           autotune();
           AFRValue = 100;
@@ -663,6 +663,7 @@ byte correctionAFRClosedLoop()
         }
         else { AFRValue = 100; } // Occurs if the egoAlgorithm is set to 0 (No Correction)
       } //Multi variable check 
+      }
       else { AFRValue = 100; } // If multivariable check fails disable correction
     } //Ignition count check
   } //egoType

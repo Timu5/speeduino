@@ -1130,7 +1130,7 @@ struct config9 {
   byte boostByGear5;
   byte boostByGear6;
 
-  byte unused10_162;
+  byte autotuneEnabled; // byte 162
   byte unused10_163;
   byte unused10_164;
   byte unused10_165;
