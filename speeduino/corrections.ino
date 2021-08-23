@@ -30,6 +30,7 @@ There are 2 top level functions that call more detailed corrections for Fuel and
 #include "maths.h"
 #include "sensors.h"
 #include "src/PID_v1/PID_v1.h"
+#include "autotune.h"
 
 long PID_O2, PID_output, PID_AFRTarget;
 /** Instance of the PID object in case that algorithm is used (Always instantiated).
@@ -613,6 +614,13 @@ byte correctionAFRClosedLoop()
       if( (currentStatus.coolant > (int)(configPage6.egoTemp - CALIBRATION_TEMPERATURE_OFFSET)) && (currentStatus.RPM > (unsigned int)(configPage6.egoRPM * 100)) && (currentStatus.TPS < configPage6.egoTPSMax) && (currentStatus.O2 < configPage6.ego_max) && (currentStatus.O2 > configPage6.ego_min) && (currentStatus.runSecs > configPage6.ego_sdelay) &&  (BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO) == 0) )
       {
 
+        if (1) // check if autotune is enabled or not
+        {
+          autotune();
+          AFRValue = 100;
+        }
+        else
+        {
         //Check which algorithm is used, simple or PID
         if (configPage6.egoAlgorithm == EGO_ALGORITHM_SIMPLE)
         {
