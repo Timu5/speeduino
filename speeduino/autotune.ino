@@ -174,7 +174,14 @@ void update3DTableValue(struct table3D *fromTable, int Y_in, int X_in, uint16_t 
               C          D
 
     */
+    /*int A = fromTable->values[yMin][xMin];
+    int B = fromTable->values[yMin][xMax];
+    int C = fromTable->values[yMax][xMin];
+    int D = fromTable->values[yMax][xMax];*/
 
+    //Check that all values aren't just the same (This regularly happens with things like the fuel trim maps)
+    //if( (A == B) && (A == C) && (A == D) ) { tableResult = A; }
+    //else
     {
       //Create some normalised position values
       //These are essentially percentages (between 0 and 1) of where the desired value falls between the nearest bins on each axis
@@ -214,29 +221,29 @@ void update3DTableValue(struct table3D *fromTable, int Y_in, int X_in, uint16_t 
       fromTable->values[yMax][xMin] = (fromTable->values[yMax][xMin] * r + c * o) >> TABLE_SHIFT_FACTOR;
       fromTable->values[yMax][xMax] = (fromTable->values[yMax][xMax] * o + d * r) >> TABLE_SHIFT_FACTOR;
 
+      //tableResult = ( (A * m) + (B * n) + (C * o) + (D * r) ) >> TABLE_SHIFT_FACTOR;
     }
 
     //Update the tables cache data
     fromTable->cacheIsValid = false;
 }
 
-
 void autotune()
 {
-    if (currentStatus.tpsDOT < 2)
+    if (currentStatus.tpsDOT < 2 && currentStatus.afrTarget > 0)
     {
         uint16_t ratio = ((currentStatus.O2 * 128u) / currentStatus.afrTarget);
 
         if(ratio < 128)
         {
             uint8_t tmp = 128u - ratio;
-            tmp = (tmp * 128u) / configPage9.autotuneStrength;
+            tmp = (tmp * configPage9.autotuneStrength) / 128u;
             ratio = 128 - tmp;
         }
         else if(ratio > 128)
         {
             uint8_t tmp = ratio - 128u;
-            tmp = (tmp * 128u) / configPage9.autotuneStrength;
+            tmp = (tmp * configPage9.autotuneStrength) /128u;
             ratio = tmp + 128;
         }
         
