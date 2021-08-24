@@ -204,10 +204,15 @@ void update3DTableValue(struct table3D *fromTable, int Y_in, int X_in, uint16_t 
       uint32_t o = ((TABLE_SHIFT_POWER-p) * q) >> TABLE_SHIFT_FACTOR;
       uint32_t r = (p * q) >> TABLE_SHIFT_FACTOR;
 
-      fromTable->values[yMin][xMin] = (fromTable->values[yMin][xMin] * ratio) / 128 * m >> TABLE_SHIFT_FACTOR;
-      fromTable->values[yMin][xMax] = (fromTable->values[yMin][xMax] * ratio) / 128 * n >> TABLE_SHIFT_FACTOR;
-      fromTable->values[yMax][xMin] = (fromTable->values[yMax][xMin] * ratio) / 128 * o >> TABLE_SHIFT_FACTOR;
-      fromTable->values[yMax][xMax] = (fromTable->values[yMax][xMax] * ratio) / 128 * r >> TABLE_SHIFT_FACTOR;
+      uint16_t a = (fromTable->values[yMin][xMin] * ratio) / 128;
+      uint16_t b = (fromTable->values[yMin][xMax] * ratio) / 128;
+      uint16_t c = (fromTable->values[yMax][xMin] * ratio) / 128;
+      uint16_t d = (fromTable->values[yMax][xMax] * ratio) / 128;
+
+      fromTable->values[yMin][xMin] = (fromTable->values[yMin][xMin] * n + a * m) >> TABLE_SHIFT_FACTOR;
+      fromTable->values[yMin][xMax] = (fromTable->values[yMin][xMax] * m + b * n) >> TABLE_SHIFT_FACTOR;
+      fromTable->values[yMax][xMin] = (fromTable->values[yMax][xMin] * r + c * o) >> TABLE_SHIFT_FACTOR;
+      fromTable->values[yMax][xMax] = (fromTable->values[yMax][xMax] * o + d * r) >> TABLE_SHIFT_FACTOR;
 
     }
 
