@@ -220,8 +220,22 @@ void autotune()
 {
     if (currentStatus.tpsDOT < 2)
     {
-        uint16_t ratio = ((currentStatus.O2 * 128) / currentStatus.afrTarget);
+        uint16_t ratio = ((currentStatus.O2 * 128u) / currentStatus.afrTarget);
 
-        update3DTableValue(&fuelTable, currentStatus.fuelLoad, currentStatus.RPM, ratio);
+        if(ratio < 128)
+        {
+            uint8_t tmp = 128u - ratio;
+            tmp = (tmp * 128u) / configPage9.autotuneStrength;
+            ratio = 128 - tmp;
+        }
+        else if(ratio > 128)
+        {
+            uint8_t tmp = ratio - 128u;
+            tmp = (tmp * 128u) / configPage9.autotuneStrength;
+            ratio = tmp + 128;
+        }
+        
+        if (ratio != 128)
+            update3DTableValue(&fuelTable, currentStatus.fuelLoad, currentStatus.RPM, ratio);
     }
 }

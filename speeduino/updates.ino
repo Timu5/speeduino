@@ -515,6 +515,7 @@ void doUpdates()
   if(EEPROM.read(EEPROM_DATA_VERSION) == 18)
   {
     configPage9.autotuneEnabled = 0;
+    configPage9.autotuneEnabled = 0;
 
     writeAllConfig();
     EEPROM.write(EEPROM_DATA_VERSION, 19);
